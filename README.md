@@ -14,11 +14,9 @@ conda install -c conda-forge tmux
 ```
 
 ## Extract SRA id's from _salmonella enterica_ species. Follw the steps given below:
-#### Go to BV-BRC website and chose an organism (salmonella)
-#### Now focus on Genomes and phenotypes tabs.
-#### Click on genomes tab…a table appears(genome name, strain, genbank access etc,.)
-#### Now you need to filter based on SRA accession ID’s. So there is a small + symbol on the right side. Click that and choose SRA accession under DB CROSS REFERENCE.
-#### There are certains rows that are blank under SRA Accession. We need to filter them out and retain the rows that have information under SRA Accession. Clicking on SRA Accession tab arranges the ids alphabetically. 
+Go to BV-BRC website and chose an organism (salmonella). Now focus on Genomes and phenotypes tabs. Click on genomes tab…a table appears(genome name, strain, genbank access etc,.)
+Now you need to filter based on SRA accession ID’s. So there is a small + symbol on the right side. Click that and choose SRA accession under DB CROSS REFERENCE.
+There are certains rows that are blank under SRA Accession. We need to filter them out and retain the rows that have information under SRA Accession. Clicking on SRA Accession tab arranges the ids alphabetically. 
 
 ## Bwa index
 ```bwa index "fasta file"```
