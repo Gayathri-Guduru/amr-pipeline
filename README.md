@@ -121,7 +121,11 @@ I directly downloaded the fasta file and transferred to vm using Winscp and then
 
 o/p: reference genome fasta file is generated.
 
+3. Upload the reference genomes and fastq files to your aws bucket.
+First, create required folders on s3. (Here, ```s3://zymo-filesystem/home/gguduru/``` is my s3 bucket where all files and folders are stored)
+Now, I created `fastq_files` folder to place my input fastq files and `reference_genome` folder to place my reference fasta file along with the indexed files.
 
+   
 
 ## Bwa index
 ```bwa index "fasta file"```
