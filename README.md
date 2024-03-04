@@ -66,8 +66,9 @@ merged_dataset <- merge(genome_data, phenotype_data, by = "Genome.ID", all = FAL
 
 # Display the merged dataset
 write.csv(merged_dataset, "merged_dataset.csv", row.names = FALSE)
+```
 
-## **TESTING**
+## *TESTING if your dataset is merged right.*
 # Subset columns from both datasets
 subset1 <- subset(genome_data, select = c("Genome.ID"))
 subset2 <- subset(phenotype_data, select = c("Genome.ID"))
