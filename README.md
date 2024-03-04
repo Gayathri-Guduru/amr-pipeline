@@ -1,7 +1,7 @@
 # amr-pipeline
 nextflow command to run:
 ```
- nextflow run main.nf --database salmonella_test  --design 's3://zymo-filesystem/home/gguduru/latest_design_sheet_2.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
+nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/home/gguduru/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
 ```
 
 ## create a conda env
