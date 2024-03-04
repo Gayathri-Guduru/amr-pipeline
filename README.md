@@ -94,7 +94,7 @@ o/p: We have a list of unique sra ids from the merged dataframe.
 5. Create the design sheet
 6. Run the pipeline!
 
-1. Retrieve fastq files from sra
+## 1. Retrieve fastq files from sra
 ```
 #!/bin/bash
 # Array of 10 SRA IDs
@@ -111,7 +111,7 @@ done
 ```
 o/p: This provides fastq files in zipped format.
 
-2. Next get a reference genome 
+## 2. Next get a reference genome 
 Go to NCBI -> select taxonomy and type species name(salmonella enterica)
 
 ![image](https://github.com/Gayathri-Guduru/amr-pipeline/assets/98939664/a752d352-bbee-4772-b6ab-cce121a4644a)
@@ -121,13 +121,11 @@ I directly downloaded the fasta file and transferred to vm using Winscp and then
 
 o/p: reference genome fasta file is generated.
 
-3. Upload the reference genomes and fastq files to your aws bucket.
+## 3. Upload the reference genomes and fastq files to your aws bucket.
 First, create required folders on s3. (Here, ```s3://zymo-filesystem/home/gguduru/``` is my s3 bucket where all files and folders are stored)
 Now, I created `fastq_files` folder to place my input fastq files and `reference_genome` folder to place my reference fasta file along with the indexed files.
 
-   
-
-## Bwa index
+To get indexed files
 ```bwa index "fasta file"```
 
 ```for f in *1.fastq.gz; do
@@ -138,11 +136,40 @@ Now, I created `fastq_files` folder to place my input fastq files and `reference
     bwa mem -t 10 GCF_000006945.2_ASM694v2_genomic.fna "$base"_1.fastq.gz "$base"_2.fastq.gz > "$base".sam
 done
 ```
+o/p Indexed files along with .sam files
+
+Now, send these files to s3.
+```
+## Transferring files to s3 from vm
+aws s3 cp /home/gguduru/ s3://zymo-filesystem/tmp/gguduru/fastq_files/ --recursive --exclude "*" --include "*.fastq.gz" # to transfer fastq files
+aws s3 cp /home/gguduru/ s3://zymo-filesystem/tmp/gguduru/reference_genome/ --recursive --exclude "*" --include "*GCF*" # to transfer indexed and fasta files
+```
+
 ## Cross-check check the alignment rate to the reference files after generating index files using bwa 
 ```samtools flagstat ../SRR2566949.sam```
 
-## Transferring files to anf from vm to scp
+## 4. Amend the igenomes.config with the reference details
+
+on `gguduru` branch of `amr-pipeline` go to `conf -> igenomes.config`
+Now, change the path of the index files to the file path on s3.
 ```
-aws s3 cp s3://your-bucket-name/path/in/s3/ /path/on/local/machine/
-aws s3 cp /path/on/local/machine/ s3://your-bucket-name/path/in/s3/ --recursive
+params{
+    databases {
+        'salmonella_test' {
+           index_path = "s3://zymo-filesystem/home/gguduru/reference_genome/*"
+           index_name = "./GCF_000006945.2_ASM694v2_genomic.fna"
+           fasta_path = "s3://zymo-filesystem/home/gguduru/reference_genome/GCF_000006945.2_ASM694v2_genomic.fna"
+      }
+    }
+}
+```
+## 5. Create the design sheet.
+This is the sheet located in `gguduru` branch of `amr-pipeline`. Go to `test_data -> design_sheet.csv`
+Now, replace the sample, read_1, read_2 with the paths on s3.
+
+![image](https://github.com/Gayathri-Guduru/amr-pipeline/assets/98939664/028fa7be-112a-420f-bf93-36737520df1c)
+
+## 6. Run the pipeline!
+```
+nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/home/gguduru/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
 ```
