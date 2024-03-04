@@ -68,41 +68,8 @@ merged_dataset <- merge(genome_data, phenotype_data, by = "Genome.ID", all = FAL
 write.csv(merged_dataset, "merged_dataset.csv", row.names = FALSE)
 ```
 
-## *TESTING if your dataset is merged right.*
-```{r}
-# Subset columns from both datasets
-subset1 <- subset(genome_data, select = c("Genome.ID"))
-subset2 <- subset(phenotype_data, select = c("Genome.ID"))
-
-# Merge based on common IDs
-merged_dataset_2 <- merge(subset1, subset2, by = "Genome.ID", all = FALSE)
-
-# Extract common genome IDs
-common_genome_ids <- intersect(genome_data$Genome.ID, phenotype_data$Genome.ID)
-
-# Filter datasets based on common genome IDs
-filtered_dataset1 <- genome_data[genome_data$Genome.ID %in% common_genome_ids, ]
-filtered_dataset2 <- phenotype_data[phenotype_data$Genome.ID %in% common_genome_ids, ]
-
-# Merge filtered datasets based on common genome IDs
-merged_filtered_datasets <- merge(filtered_dataset1, filtered_dataset2, by = "Genome.ID", all = FALSE)
-
-# Check if the values are the same for common genome IDs
-are_values_same <- all.equal(filtered_dataset1, filtered_dataset2)
-
-# Number of rows in the dataframe
-num_rows <- 34971
-
-# Create a dataframe with genome IDs containing trailing zeros
-test_dataframe <- data.frame(
-  Genome_ID = sprintf("ID%03d", seq_len(34971)),
-  Value1 = rnorm(34971),
-  Value2 = runif(34971)
-)
-
-# Display the test dataframe
-print(test_dataframe)
-
+## Create a list of unique sra ids from the merged dataframe
+```
 # Create a list of unique SRA IDs
 unique_sra_ids <- unique(merged_dataset$SRA.Accession)
 sorted_sra_ids <- unique_sra_ids[order(unique_sra_ids, decreasing = TRUE)]
@@ -119,13 +86,12 @@ writeLines(top_10_sra_ids, "top_sra_ids.txt")
 o/p: We have a list of unique sra ids from the merged dataframe.
 
 ## After creating you own dataset
-1. Create a list of unique sra ids from the merged dataframe
-2. Selected ~10 sra IDs and retrieve the fastq files from the sra (I.e. with curl/wget command) to your VM
-3. Retrieve the refseq reference genome for the species 
-4. Upload the reference genomes and fastq files to your aws bucket
-5. Amend the igenomes.config with the reference details
-6. Create the design sheet
-7. Run the pipeline!
+1. Selected ~10 sra IDs and retrieve the fastq files from the sra (I.e. with curl/wget command) to your VM
+2. Retrieve the refseq reference genome for the species 
+3. Upload the reference genomes and fastq files to your aws bucket
+4. Amend the igenomes.config with the reference details
+5. Create the design sheet
+6. Run the pipeline!
 
 1. Retrieve fastq files from sra
 ```
