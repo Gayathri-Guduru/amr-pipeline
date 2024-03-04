@@ -109,7 +109,7 @@ do
     fastq-dump --split-3 --gzip $sra_id
 done
 ```
-o/p: This provides fastq files in zipped format.
+**o/p: This provides fastq files in zipped format.**
 
 ## 2. Next get a reference genome 
 Go to NCBI -> select taxonomy and type species name(salmonella enterica)
@@ -119,7 +119,7 @@ Go to NCBI -> select taxonomy and type species name(salmonella enterica)
 In this page, on the right side table click on genome. You are redirected to genome page. Click on that..(u can download to your local pc or use curl command to download on VM)
 I directly downloaded the fasta file and transferred to vm using Winscp and then to s3.
 
-o/p: reference genome fasta file is generated.
+**o/p: reference genome fasta file is generated.**
 
 ## 3. Upload the reference genomes and fastq files to your aws bucket.
 First, create required folders on s3. (Here, ```s3://zymo-filesystem/home/gguduru/``` is my s3 bucket where all files and folders are stored)
@@ -136,7 +136,7 @@ To get indexed files
     bwa mem -t 10 GCF_000006945.2_ASM694v2_genomic.fna "$base"_1.fastq.gz "$base"_2.fastq.gz > "$base".sam
 done
 ```
-o/p Indexed files along with .sam files
+**o/p Indexed files along with .sam files**
 
 Now, send these files to s3.
 ```
@@ -145,7 +145,7 @@ aws s3 cp /home/gguduru/ s3://zymo-filesystem/tmp/gguduru/fastq_files/ --recursi
 aws s3 cp /home/gguduru/ s3://zymo-filesystem/tmp/gguduru/reference_genome/ --recursive --exclude "*" --include "*GCF*" # to transfer indexed and fasta files
 ```
 
-## Cross-check check the alignment rate to the reference files after generating index files using bwa 
+### Cross-check check the alignment rate to the reference files after generating index files using bwa 
 ```samtools flagstat ../SRR2566949.sam```
 
 ## 4. Amend the igenomes.config with the reference details
