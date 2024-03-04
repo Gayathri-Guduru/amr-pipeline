@@ -1,0 +1,11 @@
+sample,read_1,read_2
+SRR3665082,s3://zymo-filesystem/home/gguduru/fastq_files/SRR3665082_1.fastq.gz,s3://zymo-filesystem/home/gguduru/fastq_files/SRR3665082_2.fastq.gz
+SRR2567031,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567031_1.fastq.gz,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567031_2.fastq.gz
+SRR2567121,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567121_1.fastq.gz,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567121_2.fastq.gz
+SRR3664650,s3://zymo-filesystem/home/gguduru/fastq_files/SRR3664650_1.fastq.gz,s3://zymo-filesystem/home/gguduru/fastq_files/SRR3664650_2.fastq.gz
+SRR2566949,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2566949_1.fastq.gz,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2566949_2.fastq.gz
+SRR2567089,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567089_1.fastq.gz,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567089_2.fastq.gz
+SRR2567095,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567095_1.fastq.gz,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567095_2.fastq.gz
+SRR2567181,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567181_1.fastq.gz,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567181_2.fastq.gz
+SRR2567114,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567114_1.fastq.gz,s3://zymo-filesystem/home/gguduru/fastq_files/SRR2567114_2.fastq.gz
+SRR3665078,s3://zymo-filesystem/home/gguduru/fastq_files/SRR3665078_1.fastq.gz,s3://zymo-filesystem/home/gguduru/fastq_files/SRR3665078_2.fastq.gz
