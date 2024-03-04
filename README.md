@@ -21,7 +21,7 @@ There are certains rows that are blank under SRA Accession. We need to filter th
 Now we need information of Genome ID’s(key element in genomes and phenotypes tab using for merging). Download the data in CSV format. 
 
 Then open Rstudio.
- [Upload```{r}
+``` [Upload```{r}
 # Install the tidyverse package
 install.packages("tidyverse")
 ```
@@ -130,7 +130,7 @@ print(top_10_sra_ids)
 
 # Write the top 10 SRA IDs to a text file
 writeLines(top_10_sra_ids, "top_sra_ids.txt")
-
+```
 ```
 ing AMR.rmd…]()
 
