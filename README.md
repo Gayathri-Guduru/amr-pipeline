@@ -69,6 +69,7 @@ write.csv(merged_dataset, "merged_dataset.csv", row.names = FALSE)
 ```
 
 ## *TESTING if your dataset is merged right.*
+```{r}
 # Subset columns from both datasets
 subset1 <- subset(genome_data, select = c("Genome.ID"))
 subset2 <- subset(phenotype_data, select = c("Genome.ID"))
