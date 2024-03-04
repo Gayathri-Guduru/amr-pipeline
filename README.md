@@ -67,19 +67,14 @@ merged_dataset <- merge(genome_data, phenotype_data, by = "Genome.ID", all = FAL
 # Display the merged dataset
 write.csv(merged_dataset, "merged_dataset.csv", row.names = FALSE)
 
-```
-**TESTING**
-
-```{r}
+## **TESTING**
 # Subset columns from both datasets
 subset1 <- subset(genome_data, select = c("Genome.ID"))
 subset2 <- subset(phenotype_data, select = c("Genome.ID"))
 
 # Merge based on common IDs
 merged_dataset_2 <- merge(subset1, subset2, by = "Genome.ID", all = FALSE)
-```
 
-```{r}
 # Extract common genome IDs
 common_genome_ids <- intersect(genome_data$Genome.ID, phenotype_data$Genome.ID)
 
@@ -92,9 +87,7 @@ merged_filtered_datasets <- merge(filtered_dataset1, filtered_dataset2, by = "Ge
 
 # Check if the values are the same for common genome IDs
 are_values_same <- all.equal(filtered_dataset1, filtered_dataset2)
-```
 
-```{r}
 # Number of rows in the dataframe
 num_rows <- 34971
 
@@ -107,9 +100,6 @@ test_dataframe <- data.frame(
 
 # Display the test dataframe
 print(test_dataframe)
-```
-
-```{r}
 
 # Create a list of unique SRA IDs
 unique_sra_ids <- unique(merged_dataset$SRA.Accession)
@@ -124,8 +114,6 @@ print(top_10_sra_ids)
 # Write the top 10 SRA IDs to a text file
 writeLines(top_10_sra_ids, "top_sra_ids.txt")
 ```
-```
-ing AMR.rmd…]()
 
 
 ## Bwa index
