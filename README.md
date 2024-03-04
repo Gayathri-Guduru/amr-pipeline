@@ -145,7 +145,7 @@ aws s3 cp /home/gguduru/ s3://zymo-filesystem/tmp/gguduru/fastq_files/ --recursi
 aws s3 cp /home/gguduru/ s3://zymo-filesystem/tmp/gguduru/reference_genome/ --recursive --exclude "*" --include "*GCF*" # to transfer indexed and fasta files
 ```
 
-### Cross-check check the alignment rate to the reference files after generating index files using bwa 
+Cross-check check the alignment rate to the reference files after generating index files using bwa 
 ```samtools flagstat ../SRR2566949.sam```
 
 ## 4. Amend the igenomes.config with the reference details
