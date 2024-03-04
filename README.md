@@ -3,9 +3,11 @@ amr-pipeline
 
 #create a conda env
 
-```conda create --name myenv \
+```
+conda create --name myenv \
 conda activate myenv \
-conda install -c bioconda samtools #install required tools```
+conda install -c bioconda samtools #install required tools
+```
 
 # bwa index
 ```bwa index "fasta file"```
