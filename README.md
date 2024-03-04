@@ -21,12 +21,10 @@ There are certains rows that are blank under SRA Accession. We need to filter th
 Now we need information of Genome ID’s(key element in genomes and phenotypes tab using for merging). Download the data in CSV format. 
 
 Then open Rstudio.
-``` [Upload```{r}
+```{r}
 # Install the tidyverse package
 install.packages("tidyverse")
-```
 
-```{r}
 # Load the tidyverse package for data manipulation
 library(tidyverse)
 
@@ -35,7 +33,6 @@ csv_data <- "C:/Users/gguduru/Downloads/office/BVBRC_genome.csv"
 
 # Read the CSV file into a data frame
 genome_data <- read.csv(csv_data, header = TRUE, colClasses = "character")
-```
 
 # Convert the 'Genome.ID' column to string
 #data$Genome.ID <- as.character(data$Genome.ID)
@@ -56,17 +53,13 @@ genome_data <- read.csv(csv_data, header = TRUE, colClasses = "character")
 # print(genome_data)
 #write.csv(genome_data, "Genome_data.csv", row.names = FALSE)
 
-
-```{r}
 # Read the CSV file into a data frame
 csv_data_2 <- "C:/Users/gguduru/Downloads/office/BVBRC_phenotype_amr.csv"
 
 # Read the CSV file into a data frame
 phenotype_data <- read.csv(csv_data_2, header = TRUE, colClasses = "character")
-```
 
 Merging the datasets based on Genome Id's
-```{r}
 
 # Merge datasets based on the 'ID' column
 merged_dataset <- merge(genome_data, phenotype_data, by = "Genome.ID", all = FALSE)
