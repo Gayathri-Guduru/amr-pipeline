@@ -116,6 +116,44 @@ print(top_10_sra_ids)
 # Write the top 10 SRA IDs to a text file
 writeLines(top_10_sra_ids, "top_sra_ids.txt")
 ```
+o/p: We have a list of unique sra ids from the merged dataframe.
+
+## After creating you own dataset
+1. Create a list of unique sra ids from the merged dataframe
+2. Selected ~10 sra IDs and retrieve the fastq files from the sra (I.e. with curl/wget command) to your VM
+3. Retrieve the refseq reference genome for the species 
+4. Upload the reference genomes and fastq files to your aws bucket
+5. Amend the igenomes.config with the reference details
+6. Create the design sheet
+7. Run the pipeline!
+
+1. Retrieve fastq files from sra
+```
+#!/bin/bash
+# Array of 10 SRA IDs
+sra_ids=("SRR3665082" "SRR2567031" "SRR2567121" "SRR3664650" "SRR2566949" "SRR2567089" "SRR2567095" "SRR2567181" "SRR2567114" "SRR3665078")
+
+# Loop through the array and perform prefetch for each SRA ID
+for sra_id in "${sra_ids[@]}"
+do
+  prefetch $sra_id
+
+    # Run fastq-dump for single-end data
+    fastq-dump --split-3 --gzip $sra_id
+done
+```
+o/p: This provides fastq files in zipped format.
+
+2. Next get a reference genome 
+Go to NCBI -> select taxonomy and type species name(salmonella enterica)
+
+![image](https://github.com/Gayathri-Guduru/amr-pipeline/assets/98939664/a752d352-bbee-4772-b6ab-cce121a4644a)
+ 
+In this page, on the right side table click on genome. You are redirected to genome page. Click on that..(u can download to your local pc or use curl command to download on VM)
+I directly downloaded the fasta file and transferred to vm using Winscp and then to s3.
+
+o/p: reference genome fasta file is generated.
+
 
 
 ## Bwa index
