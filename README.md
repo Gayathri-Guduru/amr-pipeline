@@ -13,7 +13,8 @@ conda install -c bioconda samtools #install required tools
 conda install -c conda-forge tmux
 ```
 
-## Extract SRA id's from _salmonella enterica_ species. Follw the steps given below:
+## Extract SRA id's from _salmonella enterica_ species. 
+Follow the steps given below:
 1. Go to BV-BRC website and chose an organism (salmonella). 
 2. Now focus on Genomes and phenotypes tabs. Click on genomes tab…a table appears(genome name, strain, genbank access etc,.)
 3. Now you need to filter based on SRA accession ID’s. So there is a small + symbol on the right side. Click that and choose SRA accession under DB CROSS REFERENCE.
