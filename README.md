@@ -3,9 +3,7 @@
 Antimicrobial resistance happens when germs like bacteria and fungi develop the ability to defeat the drugs designed to kill them. That means the germs are not killed and continue to grow. Resistant infections can be difficult, and sometimes impossible, to treat. Inorder to resolve this issue we need to know AST (Anti-microbial susceptibility test) and AFST of the microrganisms. These are types of lab tests that cultures (grows) bacteria and fungi to determine how sensitive the germ is to different antibiotics and antifungals. So, now we use Machine learning models for AST prediction. 
 
 # Pipeline 
-  ![AMR-pipeline](https://github.com/Gayathri-Guduru/amr-pipeline/assets/98939664/96fe3930-3b75-4e87-905d-1bba96d06d86)
-
-
+  ![AMR-pipeline](https://github.com/Gayathri-Guduru/amr-pipeline/assets/98939664/7f32dddd-4b9e-402f-a36f-c6af0a984015)
 
 # amr-pipeline
 nextflow command to run:
