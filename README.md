@@ -1,3 +1,6 @@
+# AMR(Anti-Microbial resistance)
+Antimicrobial resistance happens when germs like bacteria and fungi develop the ability to defeat the drugs designed to kill them. That means the germs are not killed and continue to grow. Resistant infections can be difficult, and sometimes impossible, to treat.
+
 # amr-pipeline
 nextflow command to run:
 ```
