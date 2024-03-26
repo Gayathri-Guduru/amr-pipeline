@@ -180,3 +180,10 @@ Now, replace the sample, read_1, read_2 with the paths on s3.
 ```
 nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/home/gguduru/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
 ```
+
+## 7. Start developing scripts using Nextflow.
+Quality Control using Fastq.
+Genome Assembly using SPAdes.
+Quality control of assembled contigs using Quast.
+Genome Annotation using Prokka.
+Pangenome assesment using Roary/genAPI.
