@@ -182,8 +182,8 @@ nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/h
 ```
 
 ## 7. Start developing scripts using Nextflow.
-Quality Control using Fastq.
-Genome Assembly using SPAdes.
-Quality control of assembled contigs using Quast.
-Genome Annotation using Prokka.
-Pangenome assesment using Roary/genAPI.
+1. Quality Control using Fastq.
+2. Genome Assembly using SPAdes.
+3. Quality control of assembled contigs using Quast.
+4. Genome Annotation using Prokka.
+5. Pangenome assesment using Roary/genAPI.
