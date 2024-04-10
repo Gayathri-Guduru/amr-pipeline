@@ -187,3 +187,24 @@ nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/h
 3. Quality control of assembled contigs using Quast.
 4. Genome Annotation using Prokka.
 5. Pangenome assesment using Roary/genAPI.
+
+
+## 8. Run 2nd part of the pipeline (yifei's training)
+Run a test.nf file initially with datasets to check if the pipeline is working.
+We use `-profile docker` to run this. So check if you have docker installed first and then activate newgroup to run. If not installed follow below steps.
+
+```sudo groupadd docker #Create the Docker Group (if it doesn't already exist)
+sudo usermod -aG docker $USER #Add Your User to the Docker Group
+newgrp docker #Apply the Group Membership
+docker run hello-world #verify
+```
+NOTE: In this case `gguduru` is the $USER.
+
+Now make sure you have 
+
+Now test the pipeline using:
+```
+nextflow run test.nf -profile docker --outdir ./results --design ./subworkflows/test_data/null.csv
+```
+
+
