@@ -5,6 +5,11 @@ Antimicrobial resistance happens when germs like bacteria and fungi develop the 
 # Pipeline 
   ![AMR-pipeline (1)](https://github.com/Gayathri-Guduru/amr-pipeline/assets/98939664/95696b34-9b9f-4490-88ab-551957640daf)
 
+# Use tmux to run
+```tmux``` 
+and use ```tmux cntrl+b d``` to detach
+and ```attach -t 11```
+
 # amr-pipeline
 nextflow command to run:
 ```
