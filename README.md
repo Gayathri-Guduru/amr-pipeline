@@ -220,5 +220,6 @@ nextflow run test.nf -profile docker --outdir ./results --design ./subworkflows/
 3. Add gene_filtering.nf module to the combine_features_train_models.nf subworkflow.
 4. Run the pipeline.
 
-```nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/home/gguduru/test_data/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/test_data/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
+```
+nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/home/gguduru/test_data/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/test_data/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
 ```
