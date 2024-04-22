@@ -193,6 +193,7 @@ nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/h
 3. Quality control of assembled contigs using Quast.
 4. Genome Annotation using Prokka.
 5. Pangenome assesment using Roary/genAPI.
+6. Merge the training data and combine feature models.
 
 
 ## 8. Run 2nd part of the pipeline (yifei's training)
@@ -213,4 +214,11 @@ Now test the pipeline using:
 nextflow run test.nf -profile docker --outdir ./results --design ./subworkflows/test_data/null.csv
 ```
 
+## 9. If the test run is successful on the yifei's pipeline. Then merge both the pipelines.
+1. Add prep_training.nf and train_models.nf module to the existing pipeline.
+2. Add combine_features_train_models.nf subworkflow to the existing pipeline.
+3. Add gene_filtering.nf module to the combine_features_train_models.nf subworkflow.
+4. Run the pipeline.
 
+```nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/home/gguduru/test_data/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/test_data/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
+```
