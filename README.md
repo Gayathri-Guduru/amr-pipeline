@@ -138,6 +138,7 @@ First, create required folders on s3. (Here, ```s3://zymo-filesystem/home/ggudur
 Now, I created `fastq_files` folder to place my input fastq files and `reference_genome` folder to place my reference fasta file along with the indexed files.
 
 To get indexed files
+
 ```bwa index "fasta file"```
 
 ```for f in *1.fastq.gz; do
