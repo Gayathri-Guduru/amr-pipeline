@@ -223,3 +223,7 @@ nextflow run test.nf -profile docker --outdir ./results --design ./subworkflows/
 ```
 nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/home/gguduru/test_data/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/test_data/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
 ```
+
+## Merge both the pipelines.
+1. Created a new subworkflow ```input_train_data.nf``` for ```merge_snps.nf``` and ```gene_filtering.nf``` as the outputs of these along with phenotype()pheno.csv file are provided as input for the next process for ```prep_training.nf```
+2. Now, the combine_features_train_models.nf subworkflow runs prep_train_data and train_models scripts.
