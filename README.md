@@ -36,7 +36,7 @@ Follow the steps given below:
 
 Then open Rstudio.
 This is a script to generate pheno.csv file.
-i/p: BV-BRC_genome.xlsx and BV-BRC_phenotype.xlsx 
+**i/p: BV-BRC_genome.xlsx and BV-BRC_phenotype.xlsx** 
 ```{r}
 install.packages(c("readxl", "dplyr", "tidyr", "openxlsx"))
 
