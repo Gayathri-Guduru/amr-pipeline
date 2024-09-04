@@ -13,7 +13,7 @@ and ```attach -t 11```
 # amr-pipeline
 nextflow command to run:
 ```
-nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/home/gguduru/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
+nextflow run main.nf --database Mycobacterium_tuberculosis_test --design 's3://zymo-filesystem/home/gguduru/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
 ```
 
 ## create a conda env
@@ -25,9 +25,9 @@ conda install -c bioconda samtools #install required tools
 conda install -c conda-forge tmux
 ```
 
-## Extract SRA id's from _salmonella enterica_ species. 
+## Extract SRA id's from _Mycobacterium_tuberculosis_ species. 
 Follow the steps given below:
-1. Go to BV-BRC website and chose an organism (salmonella).
+1. Go to BV-BRC website and chose an organism (Mycobacterium_tuberculosis).
 2. We need to know taxonomy id inorder to filter the dataset further - go to this website to know taxon id https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1773&lvl=3&lin=f&keep=1&srchmode=1&unlock  
 3. Now back to BV-BRC website, focus on Genomes and phenotypes tabs. Click on genomes tab…a table appears(genome name, strain, genbank access etc,.)
 4. Now you need to filter based on SRA accession ID’s. So there is a small + symbol on the right side. Click that and choose SRA accession under DB CROSS REFERENCE.
