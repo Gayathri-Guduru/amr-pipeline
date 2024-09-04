@@ -331,46 +331,19 @@ Now, replace the sample, read_1, read_2 with the paths on s3.
 
 ## 6. Run the pipeline!
 ```
-nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/home/gguduru/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
+nextflow run main.nf --database Mycobacterium_tuberculosis_test --design 's3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/' -work-dir 's3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
 ```
 
-## 7. Start developing scripts using Nextflow.
+## 7. Developed scripts using Nextflow.
 1. Quality Control using Fastq.
 2. Genome Assembly using SPAdes.
 3. Quality control of assembled contigs using Quast.
 4. Genome Annotation using Prokka.
 5. Pangenome assesment using Roary/genAPI.
-6. Merge the training data and combine feature models.
-
-
-## 8. Run 2nd part of the pipeline (yifei's training)
-Run a test.nf file initially with datasets to check if the pipeline is working.
-We use `-profile docker` to run this. So check if you have docker installed first and then activate newgroup to run. If not installed follow below steps.
-
-```sudo groupadd docker #Create the Docker Group (if it doesn't already exist)
-sudo usermod -aG docker $USER #Add Your User to the Docker Group
-newgrp docker #Apply the Group Membership
-docker run hello-world #verify
-```
-NOTE: In this case `gguduru` is the $USER.
-
-Now make sure you have 
-
-Now test the pipeline using:
-```
-nextflow run test.nf -profile docker --outdir ./results --design ./subworkflows/test_data/null.csv
-```
-
-## 9. If the test run is successful on the yifei's pipeline. Then merge both the pipelines.
-1. Add prep_training.nf and train_models.nf module to the existing pipeline.
-2. Add combine_features_train_models.nf subworkflow to the existing pipeline.
-3. Add gene_filtering.nf module to the combine_features_train_models.nf subworkflow.
-4. Run the pipeline.
-
-```
-nextflow run main.nf --database salmonella_test --design 's3://zymo-filesystem/home/gguduru/test_data/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/test_data/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
-```
+6. Build the input train datasets (3 input files: pheno.csv, gene_presence_absence.csv, snp_input_N.transposed.csv.gz)
+7. Prepare the train data
+8. Train the models using combine_features_and_train_models.
 
 ## Merge both the pipelines.
-1. Created a new subworkflow ```input_train_data.nf``` for ```merge_snps.nf``` and ```gene_filtering.nf``` as the outputs of these along with phenotype()pheno.csv file are provided as input for the next process for ```prep_training.nf```
+1. Created a new subworkflow ```input_train_data.nf``` for ```merge_snps.nf``` and ```gene_filtering.nf``` as the outputs of these along with snp_input_N.transposed.csv.gz, pheno.csv file are provided as input for the next process for ```prep_training.nf```
 2. Now, the combine_features_train_models.nf subworkflow runs prep_train_data and train_models scripts.
