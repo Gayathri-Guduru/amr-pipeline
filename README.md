@@ -349,4 +349,4 @@ nextflow run main.nf --database Mycobacterium_tuberculosis_test --design 's3://z
 2. Now, the combine_features_train_models.nf subworkflow runs prep_train_data and train_models scripts.
 
 
-## Testing the pipelines on multiple datasets before merging into main branch
+#### Testing the pipelines on multiple datasets before merging into main branch
