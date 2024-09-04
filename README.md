@@ -347,3 +347,6 @@ nextflow run main.nf --database Mycobacterium_tuberculosis_test --design 's3://z
 ## Merge both the pipelines.
 1. Created a new subworkflow ```input_train_data.nf``` for ```merge_snps.nf``` and ```gene_filtering.nf``` as the outputs of these along with snp_input_N.transposed.csv.gz, pheno.csv file are provided as input for the next process for ```prep_training.nf```
 2. Now, the combine_features_train_models.nf subworkflow runs prep_train_data and train_models scripts.
+
+
+## Testing the pipelines on multiple datasets before merging into main branch
