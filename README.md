@@ -243,13 +243,43 @@ if __name__ == "__main__":
 ```
 **o/p: The fastq.gz files are uploaded to s3 bucket.**
 
+## 2. Script for design_sheet.csv
+
+```{r}
+# Load necessary library
+library(dplyr)
+
+# Read the SRA ID list
+sra_ids <- readLines("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/sra_ids.txt")
+
+# Define the S3 base path
+s3_base_path <- "s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/"
+
+# Define a function to generate S3 file paths based on SRA ID
+generate_s3_paths <- function(sra_id) {
+  data.frame(
+    sample = sra_id,
+    read_1 = paste0(s3_base_path, sra_id, "_1.fastq.gz"),
+    read_2 = paste0(s3_base_path, sra_id, "_2.fastq.gz")
+  )
+}
+
+# Create a data frame with S3 paths for each SRA ID
+s3_files_df <- do.call(rbind, lapply(sra_ids, generate_s3_paths))
+
+# Write the design sheet to a CSV file
+write.csv(s3_files_df, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/design_sheet.csv", row.names = FALSE, quote = FALSE)
+
+# Output the data frame to the console (optional)
+print(s3_files_df)
+```
 - Create fastq_files folder on the s3 bucket for ex:(s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/)
 - Create reference_genome folder in the same path on s3 bucket (s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/)
 - Create results folder (s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/)
 - Place the ```pheno.csv``` in the same path.
 - Place the ```design_sheet.csv``` in the same path.
 
-## 2. Next get a reference genome 
+## 3. Next get a reference genome 
 Go to NCBI -> select taxonomy and type species name(salmonella enterica)
 
 ![image](https://github.com/Gayathri-Guduru/amr-pipeline/assets/98939664/a752d352-bbee-4772-b6ab-cce121a4644a)
@@ -259,7 +289,7 @@ I directly downloaded the fasta file and transferred to vm using Winscp and then
 
 **o/p: reference genome fasta file is generated.**
 
-## 3. Upload the reference genomes and fastq files to your aws bucket.
+## 4. Upload the reference genomes and fastq files to your aws bucket.
 First, create required folders on s3. (Here, ```s3://zymo-filesystem/home/gguduru/``` is my s3 bucket where all files and folders are stored)
 Now, I created `fastq_files` folder to place my input fastq files and `reference_genome` folder to place my reference fasta file along with the indexed files.
 
