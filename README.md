@@ -243,11 +243,12 @@ if __name__ == "__main__":
 ```
 **o/p: The fastq.gz files are uploaded to s3 bucket.**
 
-### Create fastq_files folder on the s3 bucket for ex:(s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/)
-### Create reference_genome folder in the same path on s3 bucket (s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/)
-### Create results folder (s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/)
-### Place the ```pheno.csv``` in the same path.
-### Place the ```design_sheet.csv``` in the same path.
+- 1. Create fastq_files folder on the s3 bucket for ex:(s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/)
+- 2. Create reference_genome folder in the same path on s3 bucket (s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/)
+- 3. Create results folder (s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/)
+- 4. Place the ```pheno.csv``` in the same path.
+- 5. Place the ```design_sheet.csv``` in the same path.
+
 ## 2. Next get a reference genome 
 Go to NCBI -> select taxonomy and type species name(salmonella enterica)
 
