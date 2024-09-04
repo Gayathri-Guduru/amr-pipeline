@@ -297,15 +297,7 @@ To get indexed files
 
 ```bwa index "fasta file"```
 
-```for f in *1.fastq.gz; do
-    # Get the base name without the _1.fastq.gz suffix
-    base=$(basename "$f" _1.fastq.gz)
-
-    # Run bwa mem for the pair of files
-    bwa mem -t 10 GCF_000006945.2_ASM694v2_genomic.fna "$base"_1.fastq.gz "$base"_2.fastq.gz > "$base".sam
-done
-```
-**o/p Indexed files along with .sam files**
+**o/p Indexed files**
 
 Now, send these files to s3.
 ```
@@ -314,20 +306,19 @@ aws s3 cp /home/gguduru/ s3://zymo-filesystem/tmp/gguduru/fastq_files/ --recursi
 aws s3 cp /home/gguduru/ s3://zymo-filesystem/tmp/gguduru/reference_genome/ --recursive --exclude "*" --include "*GCF*" # to transfer indexed and fasta files
 ```
 
-Cross-check check the alignment rate to the reference files after generating index files using bwa 
-```samtools flagstat ../SRR2566949.sam```
-
 ## 4. Amend the igenomes.config with the reference details
 
-on `gguduru` branch of `amr-pipeline` go to `conf -> igenomes.config`
+on `merge` branch of `amr-pipeline` go to `conf -> igenomes.config`
 Now, change the path of the index files to the file path on s3.
 ```
 params{
     databases {
-        'salmonella_test' {
-           index_path = "s3://zymo-filesystem/home/gguduru/reference_genome/*"
-           index_name = "./GCF_000006945.2_ASM694v2_genomic.fna"
-           fasta_path = "s3://zymo-filesystem/home/gguduru/reference_genome/GCF_000006945.2_ASM694v2_genomic.fna"
+        'Mycobacterium_tuberculosis_test' {
+           index_path          = "s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/*"
+           index_name          = "./Mycobacterium_tuberculosis_GCF_000195955.2_ASM19595v2_genomic.fna"
+           fasta_path          = "s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/Mycobacterium_tuberculosis_GCF_000195955.2_ASM19595v2_genomic.fna"
+	   gff_path            = "s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/Mycobacterium_tuberculosis_genomic.gff"
+           pheno_path          = "s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/pheno.csv"
       }
     }
 }
