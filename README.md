@@ -27,11 +27,12 @@ conda install -c conda-forge tmux
 
 ## Extract SRA id's from _salmonella enterica_ species. 
 Follow the steps given below:
-1. Go to BV-BRC website and chose an organism (salmonella). 
-2. Now focus on Genomes and phenotypes tabs. Click on genomes tab…a table appears(genome name, strain, genbank access etc,.)
-3. Now you need to filter based on SRA accession ID’s. So there is a small + symbol on the right side. Click that and choose SRA accession under DB CROSS REFERENCE.
-4. There are certains rows that are blank under SRA Accession. We need to filter them out and retain the rows that have information under SRA Accession. Clicking on SRA Accession tab arranges the ids alphabetically.
-5. Now we need information of Genome ID’s(key element in genomes and phenotypes tab using for merging). Download the data in CSV format. 
+1. Go to BV-BRC website and chose an organism (salmonella).
+2. We need to know taxonomy id inorder to filter the dataset further - go to this website to know taxon id https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?mode=Info&id=1773&lvl=3&lin=f&keep=1&srchmode=1&unlock  
+3. Now back to BV-BRC website, focus on Genomes and phenotypes tabs. Click on genomes tab…a table appears(genome name, strain, genbank access etc,.)
+4. Now you need to filter based on SRA accession ID’s. So there is a small + symbol on the right side. Click that and choose SRA accession under DB CROSS REFERENCE.
+5. There are certains rows that are blank under SRA Accession. We need to filter them out and retain the rows that have information under SRA Accession. Clicking on SRA Accession tab arranges the ids alphabetically.
+6. Now we need information of Genome ID’s(key element in genomes and phenotypes tab using for merging). Download the data in CSV format. 
 
 Then open Rstudio.
 ```{r}
