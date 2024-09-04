@@ -1,0 +1,271 @@
+# Final script to generate pheno.csv
+```{r}
+install.packages(c("readxl", "dplyr", "tidyr", "openxlsx"))
+
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(openxlsx)
+
+
+# Load genome file from BV-BRC
+genome_data <- suppressWarnings(
+  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx"))
+
+# Filter any blanks or NA from SRA_Accession column in the genome file.
+genome_data_filtered <- suppressWarnings(
+  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx") %>%
+    rename(
+      Genome_ID = `Genome ID`, 
+      SRA_Accession = `SRA Accession`
+    ) %>%
+    filter(SRA_Accession != "")
+)
+
+# Check if there are any blanks or NA values in the SRA_Accession column of the genome_data_filtered
+any(is.na(genome_data_filtered$SRA_Accession) | genome_data_filtered$SRA_Accession == "") 
+
+# Load phenotype data and filter out rows with NA in Resistant_Phenotype into phenotype_data_filtered
+phenotype_data <- suppressWarnings(
+  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/BVBRC_phenotype.xlsx") %>%
+    rename(
+      Genome_ID = `Genome ID`, 
+      Resistant_Phenotype = `Resistant Phenotype`
+    )
+)
+
+# Create phenotype_data_filtered with rows where Resistant_Phenotype is not NA
+phenotype_data_filtered <- phenotype_data %>%
+  filter(!is.na(Resistant_Phenotype))
+
+# Merge datasets based on the 'Genome_ID' column
+# Only genome_data with non-blank SRA_Accession is included
+merged_dataset <- merge(genome_data_filtered, phenotype_data_filtered, by = "Genome_ID", all = FALSE)
+merged_dataset <- merged_dataset %>%
+  select(SRA_Accession, Genome_ID, Resistant_Phenotype, everything())
+
+# Check if there are any blanks or NA values in the SRA_Accession column of the merged dataset
+any(is.na(merged_dataset$SRA_Accession) | merged_dataset$SRA_Accession == "")
+
+# Display the merged dataset
+write.xlsx(merged_dataset, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx", rownames = FALSE)
+
+# Read the data from the Excel file
+data <- suppressWarnings(read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx"))
+
+# Rename the column from 'Resistant.Phenotype' to 'Phenotype'
+# And replace "IS" values with NA
+data <- data %>%
+  rename(Phenotype = Resistant_Phenotype) %>%
+  mutate(Phenotype = case_when(
+    Phenotype == "Resistant" ~ "R",
+    Phenotype == "Susceptible" ~ "S",
+    Phenotype == "Intermediate" ~ "R",
+    Phenotype == "IS" ~ NA_character_,
+    TRUE ~ as.character(Phenotype)
+  ))
+
+# Resolve duplicates by grouping and summarizing, take the first occurrence
+data_aggregated <- data %>%
+  group_by(Genome_ID, SRA_Accession, Antibiotic) %>%
+  summarise(Phenotype = first(Phenotype), .groups = 'drop') %>%
+  distinct(Genome_ID, SRA_Accession, Antibiotic, .keep_all = TRUE)
+
+# Spread the data to wide format, retaining SRA_Accession
+data_T <- data_aggregated %>%
+  spread(key = Antibiotic, value = Phenotype, fill = NA_character_)
+
+# Ensure each antibiotic column has at least 5 "R" and 5 "S" values, and remove columns with all NAs
+valid_columns <- colSums(data_T == "R", na.rm = TRUE) >= 5 & colSums(data_T == "S", na.rm = TRUE) >= 5
+data_T <- data_T %>%
+  select(SRA_Accession, Genome_ID, names(valid_columns)[valid_columns])
+
+# Remove columns that have only NA values
+data_T <- data_T[, colSums(!is.na(data_T)) > 0]
+
+# Remove duplicate SRA IDs from the entire dataframe, keeping the first occurrence
+data_T <- data_T %>% distinct(SRA_Accession, .keep_all = TRUE)
+
+# Write the transformed data with unique SRA IDs to a CSV file
+write.csv(data_T, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.csv", row.names = FALSE)
+
+# Additionally, save the pheno data to an Excel file
+write.xlsx(data_T, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.xlsx", rownames = FALSE)
+
+# Extract SRA_Accession column (already unique)
+sra_ids <- data_T$SRA_Accession
+
+# Write the unique SRA IDs to a text file, one per line
+writeLines(sra_ids, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt")
+
+# Additional script to format the SRA IDs in the output file
+# Read the input file
+input_file <- "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt"
+data <- readLines(input_file)
+
+sra_count <- length(data)
+cat("The number of unique SRA IDs in the 'sra_ids.txt' file is:", sra_count, "\n")
+
+# Split the IDs by comma and combine them into a single string with new lines
+formatted_data <- unlist(strsplit(data, ","))
+
+# Write the output to a new file
+output_file <- "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt"
+writeLines(formatted_data, output_file)
+
+# Read the formatted data from the file
+formatted_data <- readLines("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt")
+
+# Count the number of SRA IDs
+sra_count <- length(formatted_data)
+
+# Print the count
+cat("The number of SRA IDs in the 'sra_ids_formatted_r.txt' file is:", sra_count, "\n")
+
+```
+
+
+## Adding additional columns from BVBRC_genome file to the pheno file.
+```{r}
+install.packages(c("readxl", "dplyr", "tidyr", "openxlsx"))
+
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(openxlsx)
+
+# Load genome file from BV-BRC
+genome_data <- suppressWarnings(
+  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/BVBRC_genome.xlsx")
+)
+
+# Rename specific columns in the genome data
+genome_data <- genome_data %>%
+  rename(
+    Genome_ID = `Genome ID`, 
+    SRA_Accession = `SRA Accession`,
+    Genome_Quality = `Genome Quality`,
+    CheckM_contamination = `CheckM Contamination`,
+    CheckM_Completeness = `CheckM Completeness`,
+    BioProject_Accession = `BioProject Accession`  # Rename BioProject Accession
+  )
+
+# Filter any blanks or NA from SRA_Accession column in the genome file.
+genome_data_filtered <- genome_data %>%
+  filter(SRA_Accession != "")
+
+# Check if there are any blanks or NA values in the SRA_Accession column of the genome_data_filtered
+any(is.na(genome_data_filtered$SRA_Accession) | genome_data_filtered$SRA_Accession == "") 
+
+# Load phenotype data and filter out rows with NA in Resistant_Phenotype
+phenotype_data <- suppressWarnings(
+  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/BVBRC_phenotype.xlsx") %>%
+    rename(
+      Genome_ID = `Genome ID`, 
+      Resistant_Phenotype = `Resistant Phenotype`
+    )
+)
+
+# Create phenotype_data_filtered with rows where Resistant_Phenotype is not NA
+phenotype_data_filtered <- phenotype_data %>%
+  filter(!is.na(Resistant_Phenotype))
+
+# Merge datasets based on the 'Genome_ID' column
+merged_dataset <- merge(genome_data_filtered, phenotype_data_filtered, by = "Genome_ID", all = FALSE)
+
+# Ensure BioProject_Accession is included
+merged_dataset <- merged_dataset %>%
+  select(SRA_Accession, Genome_ID, BioProject_Accession, Resistant_Phenotype, everything())
+
+# Check if there are any blanks or NA values in the SRA_Accession column of the merged dataset
+any(is.na(merged_dataset$SRA_Accession) | merged_dataset$SRA_Accession == "")
+
+# Write the merged dataset to an Excel file
+write.xlsx(merged_dataset, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/merged_dataset.xlsx", rownames = FALSE)
+
+# Read the data from the Excel file
+data <- suppressWarnings(read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/merged_dataset.xlsx"))
+
+# Rename the column from 'Resistant.Phenotype' to 'Phenotype'
+# And replace "IS" values with NA
+data <- data %>%
+  rename(Phenotype = Resistant_Phenotype) %>%
+  mutate(Phenotype = case_when(
+    Phenotype == "Resistant" ~ "R",
+    Phenotype == "Susceptible" ~ "S",
+    Phenotype == "Intermediate" ~ "R",
+    Phenotype == "IS" ~ NA_character_,
+    TRUE ~ as.character(Phenotype)
+  ))
+
+# Resolve duplicates by grouping and summarizing, take the first occurrence
+data_aggregated <- data %>%
+  group_by(Genome_ID, SRA_Accession, Antibiotic) %>%
+  summarise(Phenotype = first(Phenotype), .groups = 'drop') %>%
+  distinct(Genome_ID, SRA_Accession, Antibiotic, .keep_all = TRUE)
+
+# Spread the data to wide format, retaining SRA_Accession
+data_T <- data_aggregated %>%
+  spread(key = Antibiotic, value = Phenotype, fill = NA_character_)
+
+# Ensure each antibiotic column has at least 5 "R" and 5 "S" values, and remove columns with all NAs
+valid_columns <- colSums(data_T == "R", na.rm = TRUE) >= 5 & colSums(data_T == "S", na.rm = TRUE) >= 5
+data_T <- data_T %>%
+  select(SRA_Accession, Genome_ID, names(valid_columns)[valid_columns])
+
+# Remove columns that have only NA values
+data_T <- data_T[, colSums(!is.na(data_T)) > 0]
+
+# Merge additional genome quality data
+genome_quality_data <- genome_data %>%
+  select(Genome_ID, Genome_Quality, Contigs, BioProject_Accession, CheckM_contamination, CheckM_Completeness)
+
+# Merge this additional data into the main dataset
+data_T <- merge(data_T, genome_quality_data, by = "Genome_ID", all.x = TRUE)
+
+# Remove duplicate SRA IDs from the entire dataframe, keeping the first occurrence
+data_T <- data_T %>% distinct(SRA_Accession, .keep_all = TRUE)
+
+# Write the transformed data with unique SRA IDs to a CSV file
+write.csv(data_T, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/pheno.csv", row.names = FALSE)
+
+# Additionally, save the pheno data to an Excel file
+write.xlsx(data_T, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/pheno.xlsx", rownames = FALSE)
+
+# Extract SRA_Accession column (already unique)
+sra_ids <- data_T$SRA_Accession
+
+# Write the unique SRA IDs to a text file, one per line
+writeLines(sra_ids, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/sra_ids.txt")
+
+# Additional script to format the SRA IDs in the output file
+# Read the input file
+input_file <- "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/sra_ids.txt"
+data <- readLines(input_file)
+
+sra_count <- length(data)
+cat("The number of unique SRA IDs in the 'sra_ids.txt' file is:", sra_count, "\n")
+
+# Split the IDs by comma and combine them into a single string with new lines
+formatted_data <- unlist(strsplit(data, ","))
+
+# Write the output to a new file
+output_file <- "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/sra_ids_formatted_r.txt"
+writeLines(formatted_data, output_file)
+
+# Read the formatted data from the file
+formatted_data <- readLines("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/sra_ids_formatted_r.txt")
+
+# Count the number of SRA IDs
+sra_count <- length(formatted_data)
+
+# Print the count
+cat("The number of SRA IDs in the 'sra_ids_formatted_r.txt' file is:", sra_count, "\n")
+```
+
+
+
+
+
+
+
