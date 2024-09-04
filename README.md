@@ -17,7 +17,6 @@ nextflow run main.nf --database Mycobacterium_tuberculosis_test --design 's3://z
 ```
 
 ## create a conda env
-
 ```
 conda create --name myenv \
 conda activate myenv \
@@ -163,30 +162,92 @@ cat("The number of SRA IDs in the 'sra_ids_formatted_r.txt' file is:", sra_count
 **o/p: merged_dataset.xlsx, pheno.csv, sra_ids.txt**
 
 ## After creating you own dataset
-1. Selected ~10 sra IDs and retrieve the fastq files from the sra (I.e. with curl/wget command) to your VM
+1. Total no of samples are 10804. Now from those sra IDs retrieve the fastq files(script attached below).
 2. Retrieve the refseq reference genome for the species 
 3. Upload the reference genomes and fastq files to your aws bucket
 4. Amend the igenomes.config with the reference details
-5. Create the design sheet
+5. Create the design sheet (script attached below)
 6. Run the pipeline!
 
-## 1. Retrieve fastq files from sra
+## 1. Retrieve fastq files from sra using the below python script.
 ```
-#!/bin/bash
-# Array of 10 SRA IDs
-sra_ids=("SRR3665082" "SRR2567031" "SRR2567121" "SRR3664650" "SRR2566949" "SRR2567089" "SRR2567095" "SRR2567181" "SRR2567114" "SRR3665078")
+import os
+import subprocess
+import boto3
 
-# Loop through the array and perform prefetch for each SRA ID
-for sra_id in "${sra_ids[@]}"
-do
-  prefetch $sra_id
+# Initialize S3 client
+s3_client = boto3.client('s3')
 
-    # Run fastq-dump for single-end data
-    fastq-dump --split-3 --gzip $sra_id
-done
+# Function to download and compress FASTQ files from SRA
+def download_and_compress_fastq(sra_id):
+    try:
+        # Download the SRA file using prefetch
+        command_prefetch = f"prefetch {sra_id}"
+        subprocess.run(command_prefetch, shell=True, check=True)
+
+        # Convert SRA file to FASTQ using fasterq-dump (without gzip option)
+        command_fasterq = f"fasterq-dump --split-files --outdir ./ --skip-technical {sra_id}"
+        subprocess.run(command_fasterq, shell=True, check=True)
+
+        # Compress the FASTQ files using gzip
+        for file in os.listdir():
+            if file.startswith(sra_id) and file.endswith(".fastq"):
+                command_gzip = f"gzip {file}"
+                subprocess.run(command_gzip, shell=True, check=True)
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error processing {sra_id}: {e}")
+
+# Function to upload to S3
+def upload_to_s3(file_name, bucket_name, s3_path):
+    try:
+        s3_client.upload_file(file_name, bucket_name, s3_path)
+    except Exception as e:
+        print(f"Failed to upload {file_name} to S3: {e}")
+
+# Function to process a single SRA ID
+def process_sra_id(sra_id, bucket_name, s3_base_path):
+    print(f"Processing {sra_id}...")
+
+    # Download and compress FASTQ files
+    download_and_compress_fastq(sra_id)
+
+    # Upload to S3 and delete local files
+    for file_name in os.listdir():
+        if file_name.startswith(sra_id) and file_name.endswith(".fastq.gz"):
+            s3_path = os.path.join(s3_base_path, file_name)
+            upload_to_s3(file_name, bucket_name, s3_path)
+            os.remove(file_name)  # Delete the local file after upload
+
+    print(f"Completed processing for {sra_id}")
+
+# Main function to iterate over SRA IDs sequentially
+def process_sra_ids(sra_ids, bucket_name, s3_base_path):
+    for sra_id in sra_ids:
+        process_sra_id(sra_id, bucket_name, s3_base_path)
+
+if __name__ == "__main__":
+    # Path to SRA IDs file
+    sra_ids_file = "/home/gguduru/storage/subset/Mycobacterium_tuberculosis_1773/sra_ids.txt"
+
+    # Read the SRA IDs from the file
+    with open(sra_ids_file, 'r') as file:
+        sra_ids = [line.strip() for line in file.readlines()]
+
+    # S3 bucket name and path
+    bucket_name = "zymo-filesystem"
+    s3_base_path = "home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/"
+
+    # Process the SRA IDs one by one
+    process_sra_ids(sra_ids, bucket_name, s3_base_path)
 ```
-**o/p: This provides fastq files in zipped format.**
+**o/p: The fastq.gz files are uploaded to s3 bucket.**
 
+### Create fastq_files folder on the s3 bucket for ex:(s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/)
+### Create reference_genome folder in the same path on s3 bucket (s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/)
+### Create results folder (s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/)
+### Place the ```pheno.csv``` in the same path.
+### Place the ```design_sheet.csv``` in the same path.
 ## 2. Next get a reference genome 
 Go to NCBI -> select taxonomy and type species name(salmonella enterica)
 
