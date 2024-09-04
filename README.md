@@ -32,72 +32,135 @@ Follow the steps given below:
 3. Now back to BV-BRC website, focus on Genomes and phenotypes tabs. Click on genomes tab…a table appears(genome name, strain, genbank access etc,.)
 4. Now you need to filter based on SRA accession ID’s. So there is a small + symbol on the right side. Click that and choose SRA accession under DB CROSS REFERENCE.
 5. There are certains rows that are blank under SRA Accession. We need to filter them out and retain the rows that have information under SRA Accession. Clicking on SRA Accession tab arranges the ids alphabetically.
-6. Now we need information of Genome ID’s(key element in genomes and phenotypes tab using for merging). Download the data in CSV format. 
+6. Now we need information of Genome ID’s(key element in genomes and phenotypes tab using for merging). Download the data in excel format to retain the trailing zeros. 
 
 Then open Rstudio.
+This is a script to generate pheno.csv file.
+i/p: BV-BRC_genome.xlsx and BV-BRC_phenotype.xlsx 
 ```{r}
-# Install the tidyverse package
-install.packages("tidyverse")
+install.packages(c("readxl", "dplyr", "tidyr", "openxlsx"))
 
-# Load the tidyverse package for data manipulation
-library(tidyverse)
+library(readxl)
+library(dplyr)
+library(tidyr)
+library(openxlsx)
 
-# URL of the CSV file
-csv_data <- "C:/Users/gguduru/Downloads/office/BVBRC_genome.csv"
 
-# Read the CSV file into a data frame
-genome_data <- read.csv(csv_data, header = TRUE, colClasses = "character")
+# Load genome file from BV-BRC
+genome_data <- suppressWarnings(
+  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx"))
 
-# Convert the 'Genome.ID' column to string
-#data$Genome.ID <- as.character(data$Genome.ID)
+# Filter any blanks or NA from SRA_Accession column in the genome file.
+genome_data_filtered <- suppressWarnings(
+  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx") %>%
+    rename(
+      Genome_ID = `Genome ID`, 
+      SRA_Accession = `SRA Accession`
+    ) %>%
+    filter(SRA_Accession != "")
+)
 
-# Column to shift to the first position
-#SRA_Accession <- data$SRA.Accession
+# Check if there are any blanks or NA values in the SRA_Accession column of the genome_data_filtered
+any(is.na(genome_data_filtered$SRA_Accession) | genome_data_filtered$SRA_Accession == "") 
 
-# Remove the column from its original position
-#data <- data[, !(names(data) %in% "SRA.Accession")]
+# Load phenotype data and filter out rows with NA in Resistant_Phenotype into phenotype_data_filtered
+phenotype_data <- suppressWarnings(
+  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/BVBRC_phenotype.xlsx") %>%
+    rename(
+      Genome_ID = `Genome ID`, 
+      Resistant_Phenotype = `Resistant Phenotype`
+    )
+)
 
-# Insert the column at the first position
-#data <- cbind(SRA_Accession, data)
+# Create phenotype_data_filtered with rows where Resistant_Phenotype is not NA
+phenotype_data_filtered <- phenotype_data %>%
+  filter(!is.na(Resistant_Phenotype))
 
-# Filter out rows with blanks in the SRA_Accession column
-#genome_data <- data %>% filter(!is.na(SRA_Accession) & SRA_Accession != "")
+# Merge datasets based on the 'Genome_ID' column
+# Only genome_data with non-blank SRA_Accession is included
+merged_dataset <- merge(genome_data_filtered, phenotype_data_filtered, by = "Genome_ID", all = FALSE)
+merged_dataset <- merged_dataset %>%
+  select(SRA_Accession, Genome_ID, Resistant_Phenotype, everything())
 
-# Print the filtered data or save it to a new CSV file
-# print(genome_data)
-#write.csv(genome_data, "Genome_data.csv", row.names = FALSE)
-
-# Read the CSV file into a data frame
-csv_data_2 <- "C:/Users/gguduru/Downloads/office/BVBRC_phenotype_amr.csv"
-
-# Read the CSV file into a data frame
-phenotype_data <- read.csv(csv_data_2, header = TRUE, colClasses = "character")
-
-Merging the datasets based on Genome Id's
-
-# Merge datasets based on the 'ID' column
-merged_dataset <- merge(genome_data, phenotype_data, by = "Genome.ID", all = FALSE)
+# Check if there are any blanks or NA values in the SRA_Accession column of the merged dataset
+any(is.na(merged_dataset$SRA_Accession) | merged_dataset$SRA_Accession == "")
 
 # Display the merged dataset
-write.csv(merged_dataset, "merged_dataset.csv", row.names = FALSE)
+write.xlsx(merged_dataset, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx", rownames = FALSE)
+
+# Read the data from the Excel file
+data <- suppressWarnings(read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx"))
+
+# Rename the column from 'Resistant.Phenotype' to 'Phenotype'
+# And replace "IS" values with NA
+data <- data %>%
+  rename(Phenotype = Resistant_Phenotype) %>%
+  mutate(Phenotype = case_when(
+    Phenotype == "Resistant" ~ "R",
+    Phenotype == "Susceptible" ~ "S",
+    Phenotype == "Intermediate" ~ "R",
+    Phenotype == "IS" ~ NA_character_,
+    TRUE ~ as.character(Phenotype)
+  ))
+
+# Resolve duplicates by grouping and summarizing, take the first occurrence
+data_aggregated <- data %>%
+  group_by(Genome_ID, SRA_Accession, Antibiotic) %>%
+  summarise(Phenotype = first(Phenotype), .groups = 'drop') %>%
+  distinct(Genome_ID, SRA_Accession, Antibiotic, .keep_all = TRUE)
+
+# Spread the data to wide format, retaining SRA_Accession
+data_T <- data_aggregated %>%
+  spread(key = Antibiotic, value = Phenotype, fill = NA_character_)
+
+# Ensure each antibiotic column has at least 5 "R" and 5 "S" values, and remove columns with all NAs
+valid_columns <- colSums(data_T == "R", na.rm = TRUE) >= 5 & colSums(data_T == "S", na.rm = TRUE) >= 5
+data_T <- data_T %>%
+  select(SRA_Accession, Genome_ID, names(valid_columns)[valid_columns])
+
+# Remove columns that have only NA values
+data_T <- data_T[, colSums(!is.na(data_T)) > 0]
+
+# Remove duplicate SRA IDs from the entire dataframe, keeping the first occurrence
+data_T <- data_T %>% distinct(SRA_Accession, .keep_all = TRUE)
+
+# Write the transformed data with unique SRA IDs to a CSV file
+write.csv(data_T, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.csv", row.names = FALSE)
+
+# Additionally, save the pheno data to an Excel file
+write.xlsx(data_T, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.xlsx", rownames = FALSE)
+
+# Extract SRA_Accession column (already unique)
+sra_ids <- data_T$SRA_Accession
+
+# Write the unique SRA IDs to a text file, one per line
+writeLines(sra_ids, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt")
+
+# Additional script to format the SRA IDs in the output file
+# Read the input file
+input_file <- "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt"
+data <- readLines(input_file)
+
+sra_count <- length(data)
+cat("The number of unique SRA IDs in the 'sra_ids.txt' file is:", sra_count, "\n")
+
+# Split the IDs by comma and combine them into a single string with new lines
+formatted_data <- unlist(strsplit(data, ","))
+
+# Write the output to a new file
+output_file <- "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt"
+writeLines(formatted_data, output_file)
+
+# Read the formatted data from the file
+formatted_data <- readLines("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt")
+
+# Count the number of SRA IDs
+sra_count <- length(formatted_data)
+
+# Print the count
+cat("The number of SRA IDs in the 'sra_ids_formatted_r.txt' file is:", sra_count, "\n")
 ```
-
-## Create a list of unique sra ids from the merged dataframe
-```
-# Create a list of unique SRA IDs
-unique_sra_ids <- unique(merged_dataset$SRA.Accession)
-sorted_sra_ids <- unique_sra_ids[order(unique_sra_ids, decreasing = TRUE)]
-
-# Select the top 10 SRA IDs
-top_10_sra_ids <- head(sorted_sra_ids, 10)
-
-#print("Top 10 SRA IDs:")
-print(top_10_sra_ids)
-
-# Write the top 10 SRA IDs to a text file
-writeLines(top_10_sra_ids, "top_sra_ids.txt")
-```
-o/p: We have a list of unique sra ids from the merged dataframe.
+**o/p: merged_dataset.xlsx, pheno.csv, sra_ids.txt**
 
 ## After creating you own dataset
 1. Selected ~10 sra IDs and retrieve the fastq files from the sra (I.e. with curl/wget command) to your VM
