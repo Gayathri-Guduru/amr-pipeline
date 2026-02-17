@@ -13,7 +13,7 @@ and ```attach -t 11```
 # amr-pipeline
 nextflow command to run:
 ```
-nextflow run main.nf --database Mycobacterium_tuberculosis_test --design '://-filesystem/home/gguduru/design_sheet.csv' -profile batch --outdir '://-filesystem/home/gguduru/results/' -work-dir '://-filesystem/home/gguduru/tmp/' --queue 'arn::batch:us-east-1:002226384833:job-queue/rnaseq'
+nextflow run main.nf --database Mycobacterium_tuberculosis_test --design '/home/gguduru/design_sheet.csv' -profile batch --outdir '/home/gguduru/results/' -work-dir '/home/gguduru/tmp/' 
 ```
 
 ## create a conda env
@@ -253,7 +253,7 @@ library(dplyr)
 sra_ids <- readLines("C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/sra_ids.txt")
 
 # Define the  base path
-_base_path <- "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/"
+_base_path <- "/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/"
 
 # Define a function to generate  file paths based on SRA ID
 generate__paths <- function(sra_id) {
@@ -273,9 +273,9 @@ write.csv(_files_df, "C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacte
 # Output the data frame to the console (optional)
 print(_files_df)
 ```
-- Create fastq_files folder on the  bucket for ex:(://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/)
-- Create reference_genome folder in the same path on  bucket (://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/)
-- Create results folder (://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/)
+- Create fastq_files folder on the  bucket for ex:(/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/)
+- Create reference_genome folder in the same path on  bucket (/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/)
+- Create results folder (/home/gguduru/Mycobacterium_tuberculosis_1773/results/)
 - Place the ```pheno.csv``` in the same path.
 - Place the ```design_sheet.csv``` in the same path.
 
@@ -290,7 +290,7 @@ I directly downloaded the fasta file and transferred to vm using Winscp and then
 **o/p: reference genome fasta file is generated.**
 
 ## 4. Upload the reference genomes and fastq files to your  bucket.
-First, create required folders on . (Here, ```://-filesystem/home/gguduru/``` is my  bucket where all files and folders are stored)
+First, create required folders on . (Here, ```/home/gguduru/``` is my  bucket where all files and folders are stored)
 Now, I created `fastq_files` folder to place my input fastq files and `reference_genome` folder to place my reference fasta file along with the indexed files.
 
 To get indexed files
@@ -302,8 +302,8 @@ To get indexed files
 Now, send these files to .
 ```
 ## Transferring files to  from vm
-  cp /home/gguduru/ ://-filesystem/tmp/gguduru/fastq_files/ --recursive --exclude "*" --include "*.fastq.gz" # to transfer fastq files
-  cp /home/gguduru/ ://-filesystem/tmp/gguduru/reference_genome/ --recursive --exclude "*" --include "*GCF*" # to transfer indexed and fasta files
+  cp /home/gguduru/ /tmp/gguduru/fastq_files/ --recursive --exclude "*" --include "*.fastq.gz" # to transfer fastq files
+  cp /home/gguduru/ /tmp/gguduru/reference_genome/ --recursive --exclude "*" --include "*GCF*" # to transfer indexed and fasta files
 ```
 
 ## 4. Amend the igenomes.config with the reference details
@@ -314,11 +314,11 @@ Now, change the path of the index files to the file path on .
 params{
     databases {
         'Mycobacterium_tuberculosis_test' {
-           index_path          = "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/*"
+           index_path          = "/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/*"
            index_name          = "./Mycobacterium_tuberculosis_GCF_000195955.2_ASM19595v2_genomic.fna"
-           fasta_path          = "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/Mycobacterium_tuberculosis_GCF_000195955.2_ASM19595v2_genomic.fna"
-	   gff_path            = "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/Mycobacterium_tuberculosis_genomic.gff"
-           pheno_path          = "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/pheno.csv"
+           fasta_path          = "/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/Mycobacterium_tuberculosis_GCF_000195955.2_ASM19595v2_genomic.fna"
+	   gff_path            = "/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/Mycobacterium_tuberculosis_genomic.gff"
+           pheno_path          = "/home/gguduru/Mycobacterium_tuberculosis_1773/pheno.csv"
       }
     }
 }
@@ -331,7 +331,7 @@ Now, replace the sample, read_1, read_2 with the paths on .
 
 ## 6. Run the pipeline!
 ```
-nextflow run main.nf --database Mycobacterium_tuberculosis_test --design '://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/design_sheet.csv' -profile batch --outdir '://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/' -work-dir '://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/tmp/' --queue 'arn::batch:us-east-1:002226384833:job-queue/rnaseq'
+nextflow run main.nf --database Mycobacterium_tuberculosis_test --design '/home/gguduru/Mycobacterium_tuberculosis_1773/design_sheet.csv' -profile batch --outdir '/home/gguduru/Mycobacterium_tuberculosis_1773/results/' -work-dir '/home/gguduru/Mycobacterium_tuberculosis_1773/tmp/' 
 ```
 
 ## 7. Developed scripts using Nextflow.
