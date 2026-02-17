@@ -13,7 +13,7 @@ and ```attach -t 11```
 # amr-pipeline
 nextflow command to run:
 ```
-nextflow run main.nf --database Mycobacterium_tuberculosis_test --design 's3://zymo-filesystem/home/gguduru/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/results/' -work-dir 's3://zymo-filesystem/home/gguduru/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
+nextflow run main.nf --database Mycobacterium_tuberculosis_test --design '://-filesystem/home/gguduru/design_sheet.csv' -profile batch --outdir '://-filesystem/home/gguduru/results/' -work-dir '://-filesystem/home/gguduru/tmp/' --queue 'arn::batch:us-east-1:002226384833:job-queue/rnaseq'
 ```
 
 ## create a conda env
@@ -47,11 +47,11 @@ library(openxlsx)
 
 # Load genome file from BV-BRC
 genome_data <- suppressWarnings(
-  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx"))
+  read_excel("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx"))
 
 # Filter any blanks or NA from SRA_Accession column in the genome file.
 genome_data_filtered <- suppressWarnings(
-  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx") %>%
+  read_excel("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx") %>%
     rename(
       Genome_ID = `Genome ID`, 
       SRA_Accession = `SRA Accession`
@@ -64,7 +64,7 @@ any(is.na(genome_data_filtered$SRA_Accession) | genome_data_filtered$SRA_Accessi
 
 # Load phenotype data and filter out rows with NA in Resistant_Phenotype into phenotype_data_filtered
 phenotype_data <- suppressWarnings(
-  read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/BVBRC_phenotype.xlsx") %>%
+  read_excel("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/BVBRC_phenotype.xlsx") %>%
     rename(
       Genome_ID = `Genome ID`, 
       Resistant_Phenotype = `Resistant Phenotype`
@@ -85,10 +85,10 @@ merged_dataset <- merged_dataset %>%
 any(is.na(merged_dataset$SRA_Accession) | merged_dataset$SRA_Accession == "")
 
 # Display the merged dataset
-write.xlsx(merged_dataset, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx", rownames = FALSE)
+write.xlsx(merged_dataset, "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx", rownames = FALSE)
 
 # Read the data from the Excel file
-data <- suppressWarnings(read_excel("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx"))
+data <- suppressWarnings(read_excel("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx"))
 
 # Rename the column from 'Resistant.Phenotype' to 'Phenotype'
 # And replace "IS" values with NA
@@ -124,20 +124,20 @@ data_T <- data_T[, colSums(!is.na(data_T)) > 0]
 data_T <- data_T %>% distinct(SRA_Accession, .keep_all = TRUE)
 
 # Write the transformed data with unique SRA IDs to a CSV file
-write.csv(data_T, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.csv", row.names = FALSE)
+write.csv(data_T, "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.csv", row.names = FALSE)
 
 # Additionally, save the pheno data to an Excel file
-write.xlsx(data_T, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.xlsx", rownames = FALSE)
+write.xlsx(data_T, "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.xlsx", rownames = FALSE)
 
 # Extract SRA_Accession column (already unique)
 sra_ids <- data_T$SRA_Accession
 
 # Write the unique SRA IDs to a text file, one per line
-writeLines(sra_ids, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt")
+writeLines(sra_ids, "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt")
 
 # Additional script to format the SRA IDs in the output file
 # Read the input file
-input_file <- "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt"
+input_file <- "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt"
 data <- readLines(input_file)
 
 sra_count <- length(data)
@@ -147,11 +147,11 @@ cat("The number of unique SRA IDs in the 'sra_ids.txt' file is:", sra_count, "\n
 formatted_data <- unlist(strsplit(data, ","))
 
 # Write the output to a new file
-output_file <- "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt"
+output_file <- "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt"
 writeLines(formatted_data, output_file)
 
 # Read the formatted data from the file
-formatted_data <- readLines("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt")
+formatted_data <- readLines("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt")
 
 # Count the number of SRA IDs
 sra_count <- length(formatted_data)
@@ -164,7 +164,7 @@ cat("The number of SRA IDs in the 'sra_ids_formatted_r.txt' file is:", sra_count
 ## After creating you own dataset
 1. Total no of samples are 10804. Now from those sra IDs retrieve the fastq files(script attached below).
 2. Retrieve the refseq reference genome for the species 
-3. Upload the reference genomes and fastq files to your aws bucket
+3. Upload the reference genomes and fastq files to your  bucket
 4. Amend the igenomes.config with the reference details
 5. Create the design sheet (script attached below)
 6. Run the pipeline!
@@ -175,8 +175,8 @@ import os
 import subprocess
 import boto3
 
-# Initialize S3 client
-s3_client = boto3.client('s3')
+# Initialize  client
+_client = boto3.client('')
 
 # Function to download and compress FASTQ files from SRA
 def download_and_compress_fastq(sra_id):
@@ -198,33 +198,33 @@ def download_and_compress_fastq(sra_id):
     except subprocess.CalledProcessError as e:
         print(f"Error processing {sra_id}: {e}")
 
-# Function to upload to S3
-def upload_to_s3(file_name, bucket_name, s3_path):
+# Function to upload to 
+def upload_to_(file_name, bucket_name, _path):
     try:
-        s3_client.upload_file(file_name, bucket_name, s3_path)
+        _client.upload_file(file_name, bucket_name, _path)
     except Exception as e:
-        print(f"Failed to upload {file_name} to S3: {e}")
+        print(f"Failed to upload {file_name} to : {e}")
 
 # Function to process a single SRA ID
-def process_sra_id(sra_id, bucket_name, s3_base_path):
+def process_sra_id(sra_id, bucket_name, _base_path):
     print(f"Processing {sra_id}...")
 
     # Download and compress FASTQ files
     download_and_compress_fastq(sra_id)
 
-    # Upload to S3 and delete local files
+    # Upload to  and delete local files
     for file_name in os.listdir():
         if file_name.startswith(sra_id) and file_name.endswith(".fastq.gz"):
-            s3_path = os.path.join(s3_base_path, file_name)
-            upload_to_s3(file_name, bucket_name, s3_path)
+            _path = os.path.join(_base_path, file_name)
+            upload_to_(file_name, bucket_name, _path)
             os.remove(file_name)  # Delete the local file after upload
 
     print(f"Completed processing for {sra_id}")
 
 # Main function to iterate over SRA IDs sequentially
-def process_sra_ids(sra_ids, bucket_name, s3_base_path):
+def process_sra_ids(sra_ids, bucket_name, _base_path):
     for sra_id in sra_ids:
-        process_sra_id(sra_id, bucket_name, s3_base_path)
+        process_sra_id(sra_id, bucket_name, _base_path)
 
 if __name__ == "__main__":
     # Path to SRA IDs file
@@ -234,14 +234,14 @@ if __name__ == "__main__":
     with open(sra_ids_file, 'r') as file:
         sra_ids = [line.strip() for line in file.readlines()]
 
-    # S3 bucket name and path
-    bucket_name = "zymo-filesystem"
-    s3_base_path = "home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/"
+    #  bucket name and path
+    bucket_name = "-filesystem"
+    _base_path = "home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/"
 
     # Process the SRA IDs one by one
-    process_sra_ids(sra_ids, bucket_name, s3_base_path)
+    process_sra_ids(sra_ids, bucket_name, _base_path)
 ```
-**o/p: The fastq.gz files are uploaded to s3 bucket.**
+**o/p: The fastq.gz files are uploaded to  bucket.**
 
 ## 2. Script for design_sheet.csv
 
@@ -250,32 +250,32 @@ if __name__ == "__main__":
 library(dplyr)
 
 # Read the SRA ID list
-sra_ids <- readLines("C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/sra_ids.txt")
+sra_ids <- readLines("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/sra_ids.txt")
 
-# Define the S3 base path
-s3_base_path <- "s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/"
+# Define the  base path
+_base_path <- "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/"
 
-# Define a function to generate S3 file paths based on SRA ID
-generate_s3_paths <- function(sra_id) {
+# Define a function to generate  file paths based on SRA ID
+generate__paths <- function(sra_id) {
   data.frame(
     sample = sra_id,
-    read_1 = paste0(s3_base_path, sra_id, "_1.fastq.gz"),
-    read_2 = paste0(s3_base_path, sra_id, "_2.fastq.gz")
+    read_1 = paste0(_base_path, sra_id, "_1.fastq.gz"),
+    read_2 = paste0(_base_path, sra_id, "_2.fastq.gz")
   )
 }
 
-# Create a data frame with S3 paths for each SRA ID
-s3_files_df <- do.call(rbind, lapply(sra_ids, generate_s3_paths))
+# Create a data frame with  paths for each SRA ID
+_files_df <- do.call(rbind, lapply(sra_ids, generate__paths))
 
 # Write the design sheet to a CSV file
-write.csv(s3_files_df, "C:/Users/gguduru/OneDrive - Zymo Research/Local/amr_pipeline/Mycobacterium_tuberculosis/design_sheet.csv", row.names = FALSE, quote = FALSE)
+write.csv(_files_df, "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/design_sheet.csv", row.names = FALSE, quote = FALSE)
 
 # Output the data frame to the console (optional)
-print(s3_files_df)
+print(_files_df)
 ```
-- Create fastq_files folder on the s3 bucket for ex:(s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/)
-- Create reference_genome folder in the same path on s3 bucket (s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/)
-- Create results folder (s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/)
+- Create fastq_files folder on the  bucket for ex:(://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/)
+- Create reference_genome folder in the same path on  bucket (://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/)
+- Create results folder (://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/)
 - Place the ```pheno.csv``` in the same path.
 - Place the ```design_sheet.csv``` in the same path.
 
@@ -285,12 +285,12 @@ Go to NCBI -> select taxonomy and type species name(salmonella enterica)
 ![image](https://github.com/Gayathri-Guduru/amr-pipeline/assets/98939664/a752d352-bbee-4772-b6ab-cce121a4644a)
  
 In this page, on the right side table click on genome. You are redirected to genome page. Click on that..(u can download to your local pc or use curl command to download on VM)
-I directly downloaded the fasta file and transferred to vm using Winscp and then to s3.
+I directly downloaded the fasta file and transferred to vm using Winscp and then to .
 
 **o/p: reference genome fasta file is generated.**
 
-## 4. Upload the reference genomes and fastq files to your aws bucket.
-First, create required folders on s3. (Here, ```s3://zymo-filesystem/home/gguduru/``` is my s3 bucket where all files and folders are stored)
+## 4. Upload the reference genomes and fastq files to your  bucket.
+First, create required folders on . (Here, ```://-filesystem/home/gguduru/``` is my  bucket where all files and folders are stored)
 Now, I created `fastq_files` folder to place my input fastq files and `reference_genome` folder to place my reference fasta file along with the indexed files.
 
 To get indexed files
@@ -299,39 +299,39 @@ To get indexed files
 
 **o/p Indexed files**
 
-Now, send these files to s3.
+Now, send these files to .
 ```
-## Transferring files to s3 from vm
-aws s3 cp /home/gguduru/ s3://zymo-filesystem/tmp/gguduru/fastq_files/ --recursive --exclude "*" --include "*.fastq.gz" # to transfer fastq files
-aws s3 cp /home/gguduru/ s3://zymo-filesystem/tmp/gguduru/reference_genome/ --recursive --exclude "*" --include "*GCF*" # to transfer indexed and fasta files
+## Transferring files to  from vm
+  cp /home/gguduru/ ://-filesystem/tmp/gguduru/fastq_files/ --recursive --exclude "*" --include "*.fastq.gz" # to transfer fastq files
+  cp /home/gguduru/ ://-filesystem/tmp/gguduru/reference_genome/ --recursive --exclude "*" --include "*GCF*" # to transfer indexed and fasta files
 ```
 
 ## 4. Amend the igenomes.config with the reference details
 
 on `merge` branch of `amr-pipeline` go to `conf -> igenomes.config`
-Now, change the path of the index files to the file path on s3.
+Now, change the path of the index files to the file path on .
 ```
 params{
     databases {
         'Mycobacterium_tuberculosis_test' {
-           index_path          = "s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/*"
+           index_path          = "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/*"
            index_name          = "./Mycobacterium_tuberculosis_GCF_000195955.2_ASM19595v2_genomic.fna"
-           fasta_path          = "s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/Mycobacterium_tuberculosis_GCF_000195955.2_ASM19595v2_genomic.fna"
-	   gff_path            = "s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/Mycobacterium_tuberculosis_genomic.gff"
-           pheno_path          = "s3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/pheno.csv"
+           fasta_path          = "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/Mycobacterium_tuberculosis_GCF_000195955.2_ASM19595v2_genomic.fna"
+	   gff_path            = "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/reference_genome/Mycobacterium_tuberculosis_genomic.gff"
+           pheno_path          = "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/pheno.csv"
       }
     }
 }
 ```
 ## 5. Create the design sheet.
 This is the sheet located in `gguduru` branch of `amr-pipeline`. Go to `test_data -> design_sheet.csv`
-Now, replace the sample, read_1, read_2 with the paths on s3.
+Now, replace the sample, read_1, read_2 with the paths on .
 
 ![image](https://github.com/Gayathri-Guduru/amr-pipeline/assets/98939664/028fa7be-112a-420f-bf93-36737520df1c)
 
 ## 6. Run the pipeline!
 ```
-nextflow run main.nf --database Mycobacterium_tuberculosis_test --design 's3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/design_sheet.csv' -profile awsbatch --outdir 's3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/' -work-dir 's3://zymo-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/tmp/' --awsqueue 'arn:aws:batch:us-east-1:002226384833:job-queue/rnaseq'
+nextflow run main.nf --database Mycobacterium_tuberculosis_test --design '://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/design_sheet.csv' -profile batch --outdir '://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/results/' -work-dir '://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/tmp/' --queue 'arn::batch:us-east-1:002226384833:job-queue/rnaseq'
 ```
 
 ## 7. Developed scripts using Nextflow.
