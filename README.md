@@ -47,11 +47,11 @@ library(openxlsx)
 
 # Load genome file from BV-BRC
 genome_data <- suppressWarnings(
-  read_excel("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx"))
+  read_excel("C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx"))
 
 # Filter any blanks or NA from SRA_Accession column in the genome file.
 genome_data_filtered <- suppressWarnings(
-  read_excel("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx") %>%
+  read_excel("C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/plots/BVBRC_genome.xlsx") %>%
     rename(
       Genome_ID = `Genome ID`, 
       SRA_Accession = `SRA Accession`
@@ -64,7 +64,7 @@ any(is.na(genome_data_filtered$SRA_Accession) | genome_data_filtered$SRA_Accessi
 
 # Load phenotype data and filter out rows with NA in Resistant_Phenotype into phenotype_data_filtered
 phenotype_data <- suppressWarnings(
-  read_excel("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/BVBRC_phenotype.xlsx") %>%
+  read_excel("C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/BVBRC_phenotype.xlsx") %>%
     rename(
       Genome_ID = `Genome ID`, 
       Resistant_Phenotype = `Resistant Phenotype`
@@ -85,10 +85,10 @@ merged_dataset <- merged_dataset %>%
 any(is.na(merged_dataset$SRA_Accession) | merged_dataset$SRA_Accession == "")
 
 # Display the merged dataset
-write.xlsx(merged_dataset, "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx", rownames = FALSE)
+write.xlsx(merged_dataset, "C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx", rownames = FALSE)
 
 # Read the data from the Excel file
-data <- suppressWarnings(read_excel("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx"))
+data <- suppressWarnings(read_excel("C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/merged_dataset.xlsx"))
 
 # Rename the column from 'Resistant.Phenotype' to 'Phenotype'
 # And replace "IS" values with NA
@@ -124,20 +124,20 @@ data_T <- data_T[, colSums(!is.na(data_T)) > 0]
 data_T <- data_T %>% distinct(SRA_Accession, .keep_all = TRUE)
 
 # Write the transformed data with unique SRA IDs to a CSV file
-write.csv(data_T, "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.csv", row.names = FALSE)
+write.csv(data_T, "C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.csv", row.names = FALSE)
 
 # Additionally, save the pheno data to an Excel file
-write.xlsx(data_T, "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.xlsx", rownames = FALSE)
+write.xlsx(data_T, "C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/pheno.xlsx", rownames = FALSE)
 
 # Extract SRA_Accession column (already unique)
 sra_ids <- data_T$SRA_Accession
 
 # Write the unique SRA IDs to a text file, one per line
-writeLines(sra_ids, "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt")
+writeLines(sra_ids, "C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt")
 
 # Additional script to format the SRA IDs in the output file
 # Read the input file
-input_file <- "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt"
+input_file <- "C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids.txt"
 data <- readLines(input_file)
 
 sra_count <- length(data)
@@ -147,11 +147,11 @@ cat("The number of unique SRA IDs in the 'sra_ids.txt' file is:", sra_count, "\n
 formatted_data <- unlist(strsplit(data, ","))
 
 # Write the output to a new file
-output_file <- "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt"
+output_file <- "C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt"
 writeLines(formatted_data, output_file)
 
 # Read the formatted data from the file
-formatted_data <- readLines("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt")
+formatted_data <- readLines("C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/plots/plots/sra_ids_formatted_r.txt")
 
 # Count the number of SRA IDs
 sra_count <- length(formatted_data)
@@ -250,7 +250,7 @@ if __name__ == "__main__":
 library(dplyr)
 
 # Read the SRA ID list
-sra_ids <- readLines("C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/sra_ids.txt")
+sra_ids <- readLines("C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/sra_ids.txt")
 
 # Define the  base path
 _base_path <- "://-filesystem/home/gguduru/Mycobacterium_tuberculosis_1773/fastq_files/"
@@ -268,7 +268,7 @@ generate__paths <- function(sra_id) {
 _files_df <- do.call(rbind, lapply(sra_ids, generate__paths))
 
 # Write the design sheet to a CSV file
-write.csv(_files_df, "C:/Users/gguduru/OneDrive -  Research/Local/amr_pipeline/Mycobacterium_tuberculosis/design_sheet.csv", row.names = FALSE, quote = FALSE)
+write.csv(_files_df, "C:/Users/gguduru/OneDrive -  /Local/amr_pipeline/Mycobacterium_tuberculosis/design_sheet.csv", row.names = FALSE, quote = FALSE)
 
 # Output the data frame to the console (optional)
 print(_files_df)
