@@ -327,8 +327,6 @@ params{
 This is the sheet located in `gguduru` branch of `amr-pipeline`. Go to `test_data -> design_sheet.csv`
 Now, replace the sample, read_1, read_2 with the paths on .
 
-![image](https://github.com/Gayathri-Guduru/amr-pipeline/assets/98939664/028fa7be-112a-420f-bf93-36737520df1c)
-
 ## 6. Run the pipeline!
 ```
 nextflow run main.nf --database Mycobacterium_tuberculosis_test --design '/home/gguduru/Mycobacterium_tuberculosis_1773/design_sheet.csv' -profile batch --outdir '/home/gguduru/Mycobacterium_tuberculosis_1773/results/' -work-dir '/home/gguduru/Mycobacterium_tuberculosis_1773/tmp/' 
